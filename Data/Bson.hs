@@ -325,6 +325,14 @@ instance Val MinMaxKey where
 	cast' (MinMax x) = Just x
 	cast' _ = Nothing
 
+instance (Val a) => Val (Maybe a) where
+  val (Just x) = val x
+  val Nothing  = Null
+  -- NOTE: cast' (Just x) is an input that probably we are not going to get
+  -- probably Tony can infer if this is necessary, if it is the case, it makes
+  -- this patch more or less useless :-(
+  cast' Null = Nothing
+
 fitInt :: forall n m. (Integral n, Integral m, Bounded m) => n -> Maybe m
 -- ^ If number fits in type m then cast to m, otherwise Nothing
 fitInt n = if fromIntegral (minBound :: m) <= n && n <= fromIntegral (maxBound :: m)
